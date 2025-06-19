@@ -36,6 +36,62 @@ public class Game {
         board.display();
     }
 
+    public void makeMove() {
+        //check the next player
+        Player currPlayer = players.get(nextPlayerIndex);
+
+        Move move;
+        //validate the move
+        do{
+            move = currPlayer.makeMove(board);
+        }while(!isValidateMove(move));
+
+        //update cell on the board
+        Cell cellToUpdate = board.getGrid().get(move.getCell().getRow()).get(move.getCell().getCol());
+        cellToUpdate.setCellState(CellState.FILLED);
+        cellToUpdate.setSymbol(currPlayer.getSymbol());
+
+        //Add move to moves history
+        moves.add(move);
+
+        //Check the winner or is draw
+        if(checkWinner(move)){
+            setGameState(GameState.SUCCESS);
+            setWinner(currPlayer);
+        }else if(moves.size() == board.getDimension() * board.getDimension()){
+            setGameState(GameState.DRAW);
+        }
+
+        //Increment the next player index
+        nextPlayerIndex++; //0, 1, 2, 0, 1, 2
+        nextPlayerIndex = nextPlayerIndex % players.size();
+        // (a + b) % n
+    }
+
+    private boolean checkWinner(Move move) {
+        for(WinningStrategy strategy : winningStrategies){
+            if(strategy.checkWinner(board, move)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isValidateMove(Move move) {
+        int r = move.getCell().getRow();
+        int c = move.getCell().getCol();
+        if( r < 0 || r >= board.getDimension() || c < 0 || c >= board.getDimension()){
+            System.out.println("Invalid Move: Outside of the board");
+            return false;
+        }
+        if(board.getGrid().get(r).get(c).getCellState().equals(CellState.FILLED)){
+            System.out.println("Invalid Move: Cell is filled");
+            return false;
+        }
+
+        return true;
+    }
+
     public static class Builder {
         private int dimension; // used to create board
         private List<Player> players;

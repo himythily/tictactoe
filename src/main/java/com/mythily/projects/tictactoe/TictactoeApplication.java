@@ -40,18 +40,23 @@ public class TictactoeApplication {
 		//start the game
 		Game game = gameController.startGame(3, players, winningStrategies);
 		gameController.display(game);
-		/*while(gameController.checkGameState(game) == GameState.IN_PROGRESS){
-			gameController.display(game);
-			gameController.makeMove(game);
-		}*/
 
-		if(gameController.checkGameState(game) == GameState.SUCCESS){
-			System.out.println();
-		}
 		//make the move
-
+		while(gameController.checkGameState(game) == GameState.IN_PROGRESS){
+			gameController.makeMove(game);
+			gameController.display(game);
+		}
 		//check for winner
 		//declare winner and stop the game
+		if(gameController.checkGameState(game) == GameState.SUCCESS){
+			System.out.println(game.getWinner()+" is the winner.");
+		}else if(gameController.checkGameState(game) == GameState.DRAW){
+			System.out.println("Game is draw.");
+		}
+
+
+
+
 
 
 	}

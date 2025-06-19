@@ -15,7 +15,7 @@ public class Cell {
         this.cellState = CellState.EMPTY;
         this.symbol = null;
     }
-    
+
     public void display() {
         if(cellState.equals(CellState.EMPTY)){
             System.out.print("| - |");
