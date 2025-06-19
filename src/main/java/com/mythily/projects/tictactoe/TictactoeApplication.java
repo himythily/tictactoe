@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 @SpringBootApplication
 public class TictactoeApplication {
@@ -45,6 +46,12 @@ public class TictactoeApplication {
 		while(gameController.checkGameState(game) == GameState.IN_PROGRESS){
 			gameController.makeMove(game);
 			gameController.display(game);
+			System.out.println("Do you want to continue(1) or undo(2)?");
+			Scanner scanner = new Scanner(System.in);
+			int option = scanner.nextInt();
+			if(option == 2){
+				gameController.undo(game);
+			}
 		}
 		//check for winner
 		//declare winner and stop the game

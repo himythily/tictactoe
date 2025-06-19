@@ -66,6 +66,8 @@ public class Game {
         nextPlayerIndex++; //0, 1, 2, 0, 1, 2
         nextPlayerIndex = nextPlayerIndex % players.size();
         // (a + b) % n
+
+
     }
 
     private boolean checkWinner(Move move) {
@@ -77,6 +79,11 @@ public class Game {
         return false;
     }
 
+    public void undoWinningStrategies(Move move) {
+        for(WinningStrategy winningStrategy:winningStrategies){
+            winningStrategy.handleUndo(move);
+        }
+    }
     private boolean isValidateMove(Move move) {
         int r = move.getCell().getRow();
         int c = move.getCell().getCol();
@@ -90,6 +97,28 @@ public class Game {
         }
 
         return true;
+    }
+
+    public void undo() {
+        if(moves.size() == 0){
+            System.out.println("No more moves to undo");
+            return;
+        }
+        Move lastMove = moves.get(moves.size() - 1);
+        moves.remove(moves.size() - 1);
+
+        //reset on the board
+        Cell cellToUpdate = board.getGrid().get(lastMove.getCell().getRow()).get(lastMove.getCell().getCol());
+        cellToUpdate.setCellState(CellState.EMPTY);
+        cellToUpdate.setSymbol(null);
+
+        setGameState(GameState.IN_PROGRESS);
+        setWinner(null);
+
+        nextPlayerIndex--;
+        //(a - b) % n => (a - b + n) % n
+        nextPlayerIndex = (nextPlayerIndex + players.size()) % players.size();
+        undoWinningStrategies(lastMove);
     }
 
     public static class Builder {
